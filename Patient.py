@@ -1,40 +1,47 @@
 import sqlite3
-con = sqlite3.connect('Hospital.db')
 
-curr = con.cursor()
+con = sqlite3.connect("hospital.db")
+cursor = con.cursor()
+#
+# sqlite_query = '''CREATE TABLE patient(
+#                patientcode TEXT PRIMARY KEY,
+#                name TEXT NOT NULL,
+#                Address TEXT NOT NULL,
+#               phone INTEGER NOT NULL);'''
+# cursor.execute(sqlite_query)
+def add():
 
-Create_query = '''CREATE TABLE if not exists Patient(
-                  PatientCode INTEGER PRIMARY KEY AUTOINCREMENT,
-                  Name TEXT NOT NULL,
-                  ADDRESS TEXT NOT NULL UNIQUE,
-                  CONTACTNO INTEGER NOT NULL UNIQUE ) '''
-curr.execute(Create_query)
+    patientcode = input("Patient Code : ")
+    name = input("Name : ")
+    address = input("Address : ")
+    phone = int(input("Phone number : "))
 
-check = 1
-while check:
-    c = int(input( "Main menu\n 1) Add new Patient record \n 2) View all Details"))
+    cursor.execute("INSERT INTO patient VALUES(?,?,?,?)",(patientcode,name,address,phone))
+    print("INSERTED SUCCESSFULLY!")
+    con.commit()
 
-    if c ==1:
-        n = int(input("Enter no of patient "))
-        for i in range(n):
-            patientCode = int(input("Enter ID: "))
-            Name = input("Enter the name: ")
-            Address = input("Enter the Address: ")
-            contactNo = int(input("Enter the phone No: "))
-            insert_query = f"insert into Patient values({patientCode},'{Name}','{Address}',{contactNo})"
-            curr.execute(insert_query)
-            con.commit()
-    elif c ==2:
-        select_query = "SELECT * FROM Patient"
-        curr.execute(select_query)
-        result = curr.fetchall()
-        for row in result:
-            print('patientID:',row[0])
-            print('Name of patient:',row[1])
-            print('Address of patient :',row[2])
-            print('Contact no :',row[3])
+def view():
+    sql_view = "Select * FROM patient"
+    cursor.execute(sql_view)
 
-            con.commit()
-    else :
-        print("Exit the program")
-        check = 0
+    records = cursor.fetchall()
+
+    for item in records:
+        print(item)
+
+    con.commit()
+
+while(True):
+    print('''
+          1. Add Patients
+          2. View Patients
+          3. EXIT ''')
+    choice = int(input("Select an option : "))
+
+    functions =[add,view]
+    a = functions[choice-1]()
+    ch = input("\n Press enter to continue OR press N to discontinue!")
+    if (ch == "n" or ch == "N"):
+        break
+    else:
+        pass
